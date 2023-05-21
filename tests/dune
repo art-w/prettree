@@ -1,4 +1,9 @@
 (executable
+ (name simple_graphics)
+ (modules simple_graphics)
+ (libraries prettree graphics))
+
+(executable
  (name graphics)
  (modules graphics)
  (libraries prettree graphics))

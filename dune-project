@@ -10,6 +10,8 @@
 
 (maintainers "art.wendling@gmail.com")
 
+(documentation "https://art-w.github.io/prettree/prettree/Prettree")
+
 (license MIT)
 
 (package

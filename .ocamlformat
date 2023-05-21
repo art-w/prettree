@@ -1,0 +1,11 @@
+version = 0.21.0
+profile = ocamlformat
+let-binding-spacing = compact
+sequence-style = separator
+doc-comments = after-when-possible
+exp-grouping = preserve
+cases-exp-indent = 4
+cases-matching-exp-indent = normal
+if-then-else = keyword-first
+parens-tuple = multi-line-only
+break-cases = toplevel
