@@ -5,6 +5,7 @@ maintainer: ["art.wendling@gmail.com"]
 authors: ["Arthur Wendling"]
 license: "MIT"
 homepage: "https://github.com/art-w/prettree"
+doc: "https://art-w.github.io/prettree/prettree/Prettree"
 bug-reports: "https://github.com/art-w/prettree/issues"
 depends: [
   "ocaml" {>= "4.0.8"}
