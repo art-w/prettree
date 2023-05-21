@@ -1,0 +1,9 @@
+(executable
+ (name graphics)
+ (modules graphics)
+ (libraries prettree graphics))
+
+(executable
+ (name text)
+ (modules text)
+ (libraries prettree))
