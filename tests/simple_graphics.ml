@@ -38,7 +38,8 @@ let rec my_layout = function
         Prettree.padding 10.0
       and+ (left_x, left_y), (right_x, right_y) =
         Prettree.horz
-        @@ (* siblings are horizontally aligned *)
+        @@
+        (* siblings are horizontally aligned *)
         let+ left_pos = my_layout left
         and+ () =
           (* horizontal separation between left and right *)

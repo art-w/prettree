@@ -1,4 +1,4 @@
-version = 0.21.0
+version = 0.26.0
 profile = ocamlformat
 let-binding-spacing = compact
 sequence-style = separator

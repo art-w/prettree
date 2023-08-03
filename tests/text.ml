@@ -79,34 +79,34 @@ let rec render = function
   | Rose (root, children) ->
       T.vert
         (let open T.Syntax in
-        let+ root = node ~box:true root
-        and+ () = T.padding 1.0
-        and+ children =
-          T.horz @@ T.list ~padding:3.0 @@ List.map render children
-        in
-        fun img ->
-          let ((rx, ry) as root_pos) = root img in
-          let children_pos = List.map (fun child -> child img) children in
-          let nb_children = List.length children_pos in
-          let min_x, _ = List.hd children_pos in
-          let max_x, _ = List.hd (List.rev children_pos) in
-          Image.draw_hline img min_x max_x (ry + 3) ;
-          List.iteri
-            (fun i (cx, cy) ->
-              Image.set img (cx, cy) "┷" ;
-              Image.set img
-                (cx, cy - 1)
-                ( if nb_children = 1
-                then "│"
-                else if i = 0
-                then "┌"
-                else if i + 1 = nb_children
-                then "┐"
-                else "┬" ) )
-            children_pos ;
-          Image.set img (rx, ry + 2) "┯" ;
-          if nb_children > 1 then Image.set img (rx, ry + 3) "┴" ;
-          root_pos)
+         let+ root = node ~box:true root
+         and+ () = T.padding 1.0
+         and+ children =
+           T.horz @@ T.list ~padding:3.0 @@ List.map render children
+         in
+         fun img ->
+           let ((rx, ry) as root_pos) = root img in
+           let children_pos = List.map (fun child -> child img) children in
+           let nb_children = List.length children_pos in
+           let min_x, _ = List.hd children_pos in
+           let max_x, _ = List.hd (List.rev children_pos) in
+           Image.draw_hline img min_x max_x (ry + 3) ;
+           List.iteri
+             (fun i (cx, cy) ->
+               Image.set img (cx, cy) "┷" ;
+               Image.set img
+                 (cx, cy - 1)
+                 ( if nb_children = 1
+                   then "│"
+                   else if i = 0
+                   then "┌"
+                   else if i + 1 = nb_children
+                   then "┐"
+                   else "┬" ) )
+             children_pos ;
+           Image.set img (rx, ry + 2) "┯" ;
+           if nb_children > 1 then Image.set img (rx, ry + 3) "┴" ;
+           root_pos )
 
 let rec perfect n =
   if n = 0

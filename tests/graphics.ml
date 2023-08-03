@@ -38,39 +38,39 @@ let rec layout ~depth =
       let width = 1.0 +. Random.float 2.0 in
       T.vert
         (let open T.Syntax in
-        let+ parent, parent_bot =
-          T.make (width, height) (fun (x, y) ->
-              G.set_color (G.rgb 200 200 200) ;
-              fill_rect (x, y) (width, height) ;
-              G.set_color G.black ;
-              draw_rect (x, y) (width, height) ;
-              let x = x +. (width /. 2.0) in
-              (x, y), (x, y +. height) )
-        and+ () = T.padding 1.0
-        and+ left, right =
-          T.horz
-          @@ let+ left = layout ~depth left
-             and+ () = T.padding 0.5
-             and+ right = layout ~depth right in
-             left, right
-        in
-        draw_line parent_bot left ; draw_line parent_bot right ; parent)
+         let+ parent, parent_bot =
+           T.make (width, height) (fun (x, y) ->
+               G.set_color (G.rgb 200 200 200) ;
+               fill_rect (x, y) (width, height) ;
+               G.set_color G.black ;
+               draw_rect (x, y) (width, height) ;
+               let x = x +. (width /. 2.0) in
+               (x, y), (x, y +. height) )
+         and+ () = T.padding 1.0
+         and+ left, right =
+           T.horz
+           @@ let+ left = layout ~depth left
+              and+ () = T.padding 0.5
+              and+ right = layout ~depth right in
+              left, right
+         in
+         draw_line parent_bot left ; draw_line parent_bot right ; parent )
   | Single child ->
       let height = 1.0 +. Random.float 2.0 in
       let width = 1.0 +. Random.float 2.0 in
       T.vert
         (let open T.Syntax in
-        let+ parent, parent_bot =
-          T.make (width, height) (fun (x, y) ->
-              G.set_color (G.rgb 200 200 200) ;
-              fill_rect (x, y) (width, height) ;
-              G.set_color G.black ;
-              draw_rect (x, y) (width, height) ;
-              let x = x +. (width /. 2.0) in
-              (x, y), (x, y +. height) )
-        and+ () = T.padding 0.5
-        and+ child = layout ~depth child in
-        draw_line parent_bot child ; parent)
+         let+ parent, parent_bot =
+           T.make (width, height) (fun (x, y) ->
+               G.set_color (G.rgb 200 200 200) ;
+               fill_rect (x, y) (width, height) ;
+               G.set_color G.black ;
+               draw_rect (x, y) (width, height) ;
+               let x = x +. (width /. 2.0) in
+               (x, y), (x, y +. height) )
+         and+ () = T.padding 0.5
+         and+ child = layout ~depth child in
+         draw_line parent_bot child ; parent )
 
 let rec layout2 ~depth =
   let depth = depth + 1 in
@@ -83,30 +83,30 @@ let rec layout2 ~depth =
   | Single child ->
       T.vert
         (let open T.Syntax in
-        let+ child = layout2 ~depth child
-        and+ () = T.padding 0.5
-        and+ parent =
-          T.make (1.0, 1.0) (fun (x, y) ->
-              let x, y = x +. 0.5, y +. 0.5 in
-              fill_circle (x, y) 10 ;
-              x, y )
-        in
-        draw_line parent child ; parent)
+         let+ child = layout2 ~depth child
+         and+ () = T.padding 0.5
+         and+ parent =
+           T.make (1.0, 1.0) (fun (x, y) ->
+               let x, y = x +. 0.5, y +. 0.5 in
+               fill_circle (x, y) 10 ;
+               x, y )
+         in
+         draw_line parent child ; parent )
   | Bin (left, right) ->
       let tree =
         T.vert
           (let open T.Syntax in
-          let+ left, right =
-            T.horz
-              (T.pair ~padding:0.5 (layout2 ~depth left) (layout2 ~depth right))
-          and+ () = T.padding 0.5
-          and+ parent =
-            T.make (1.0, 1.0) (fun (x, y) ->
-                let x, y = x +. 0.5, y +. 0.5 in
-                fill_circle (x, y) 10 ;
-                x, y )
-          in
-          draw_line parent left ; draw_line parent right ; parent)
+           let+ left, right =
+             T.horz
+               (T.pair ~padding:0.5 (layout2 ~depth left) (layout2 ~depth right))
+           and+ () = T.padding 0.5
+           and+ parent =
+             T.make (1.0, 1.0) (fun (x, y) ->
+                 let x, y = x +. 0.5, y +. 0.5 in
+                 fill_circle (x, y) 10 ;
+                 x, y )
+           in
+           draw_line parent left ; draw_line parent right ; parent )
       in
       if depth <> -1
       then tree
@@ -131,29 +131,29 @@ let rec layout3 ~depth =
   | Single child ->
       T.vert
         (let open T.Syntax in
-        let+ parent =
-          T.make (1.0, 1.0) (fun (x, y) ->
-              let x, y = x +. 0.5, y +. 0.5 in
-              fill_circle (x, y) 10 ;
-              x, y )
-        and+ () = T.padding 0.5
-        and+ child = layout3 ~depth child in
-        draw_line parent child ; parent)
+         let+ parent =
+           T.make (1.0, 1.0) (fun (x, y) ->
+               let x, y = x +. 0.5, y +. 0.5 in
+               fill_circle (x, y) 10 ;
+               x, y )
+         and+ () = T.padding 0.5
+         and+ child = layout3 ~depth child in
+         draw_line parent child ; parent )
   | Bin (left, right) ->
       let tree =
         T.vert
           (let open T.Syntax in
-          let+ parent =
-            T.make (1.0, 1.0) (fun (x, y) ->
-                let x, y = x +. 0.5, y +. 0.5 in
-                fill_circle (x, y) 10 ;
-                x, y )
-          and+ () = T.padding 0.5
-          and+ left, right =
-            T.horz
-              (T.pair ~padding:0.5 (layout3 ~depth left) (layout3 ~depth right))
-          in
-          draw_line parent left ; draw_line parent right ; parent)
+           let+ parent =
+             T.make (1.0, 1.0) (fun (x, y) ->
+                 let x, y = x +. 0.5, y +. 0.5 in
+                 fill_circle (x, y) 10 ;
+                 x, y )
+           and+ () = T.padding 0.5
+           and+ left, right =
+             T.horz
+               (T.pair ~padding:0.5 (layout3 ~depth left) (layout3 ~depth right))
+           in
+           draw_line parent left ; draw_line parent right ; parent )
       in
       if depth <> -1
       then tree
