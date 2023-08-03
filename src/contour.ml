@@ -119,6 +119,8 @@ let max_opt opt v =
   | None -> Some v
   | Some r -> Some (max r v)
 
+let ( =. ) a b = abs_float (a -. b) <= 0.00001
+
 let rec offset ~ox ~oy acc hx xs hy ys =
   match xs, ys with
   | Offset dx :: xs, _ -> offset ~ox:(ox +. dx) ~oy acc hx xs hy ys
@@ -129,7 +131,7 @@ let rec offset ~ox ~oy acc hx xs hy ys =
       let acc = max_opt acc acc' in
       let hx' = hx +. h_left in
       let hy' = hy +. h_right in
-      if hx' = hy'
+      if hx' =. hy'
       then offset ~ox ~oy acc hx' xs' hy' ys'
       else if hx' < hy'
       then offset ~ox ~oy acc hx' xs' hy ys
@@ -157,33 +159,35 @@ let add offset t =
 
 type side = Neither | Left | Right
 
-let rec merge ~ox ~oy h hx xs hy ys =
+let rec merge ~acc ~ox ~oy h hx xs hy ys =
   match xs, ys with
-  | [], [] -> Neither, []
-  | Offset dx :: xs, _ -> merge ~ox:(ox +. dx) ~oy h hx xs hy ys
-  | _, Offset dy :: ys -> merge ~ox ~oy:(oy +. dy) h hx xs hy ys
+  | [], [] -> Neither, List.rev acc
+  | Offset dx :: xs, _ -> merge ~acc ~ox:(ox +. dx) ~oy h hx xs hy ys
+  | _, Offset dy :: ys -> merge ~acc ~ox ~oy:(oy +. dy) h hx xs hy ys
   | ( Rect {min_x= x0; height= h_left; _} :: xs'
     , Rect {max_x= y1; height= h_right; _} :: ys' ) ->
       let hx' = hx +. h_left in
       let hy' = hy +. h_right in
       let h_min = min hx' hy' in
       let line = Rect {min_x= x0 +. ox; max_x= y1 +. oy; height= h_min -. h} in
-      let side, rest =
-        if hx' = hy'
-        then merge ~ox ~oy h_min hx' xs' hy' ys'
-        else if hx' < hy'
-        then merge ~ox ~oy h_min hx' xs' hy ys
-        else merge ~ox ~oy h_min hx xs hy' ys'
-      in
-      side, line :: rest
+      let acc = line :: acc in
+      if hx' =. hy'
+      then merge ~acc ~ox ~oy h_min hx' xs' hy' ys'
+      else if hx' < hy'
+      then merge ~acc ~ox ~oy h_min hx' xs' hy ys
+      else merge ~acc ~ox ~oy h_min hx xs hy' ys'
   | Rect {min_x; max_x; height} :: xs, [] ->
       let hx' = hx +. height in
       let h_rest = hx' -. hy in
-      Left, Offset ox :: Rect {min_x; max_x; height= h_rest} :: xs
+      ( Left
+      , List.rev_append acc
+          (Offset ox :: Rect {min_x; max_x; height= h_rest} :: xs) )
   | [], Rect {min_x; max_x; height} :: ys ->
       let hy' = hy +. height in
       let h_rest = hy' -. hx in
-      Right, Offset oy :: Rect {min_x; max_x; height= h_rest} :: ys
+      ( Right
+      , List.rev_append acc
+          (Offset oy :: Rect {min_x; max_x; height= h_rest} :: ys) )
 
 let merge a b =
   let left_padding =
@@ -196,7 +200,7 @@ let merge a b =
     | [] -> a.right_padding +. b.left_padding +. b.right_padding
     | _ -> b.right_padding
   in
-  let side, shape = merge ~ox:0.0 ~oy:0.0 0.0 0.0 a.shape 0.0 b.shape in
+  let side, shape = merge ~acc:[] ~ox:0.0 ~oy:0.0 0.0 0.0 a.shape 0.0 b.shape in
   let bottom_offset =
     match side with
     | Neither -> 0.0

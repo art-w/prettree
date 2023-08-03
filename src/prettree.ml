@@ -68,12 +68,24 @@ let pair ?padding a b =
       let+ a and+ () = pad p and+ b in
       a, b
 
-let rec list ~p = function
-  | [] -> make (0.0, 0.0) (fun _ -> [])
-  | [x] -> map (fun x -> [x]) x
-  | x :: xs ->
-      let open Syntax in
-      let+ xs = list ~p xs and+ () = padding p and+ x in
-      x :: xs
+let rec pairs ?padding acc = function
+  | [] -> List.rev acc
+  | [x] -> List.rev (x::acc)
+  | x::y::xs ->
+      let xy =
+        let open Syntax in
+        let+ (x, y) = pair ?padding x y in
+        fun rest -> x (y rest)
+      in
+      pairs ?padding (xy::acc) xs
 
-let list ?(padding = 0.0) ts = map List.rev (list ~p:padding (List.rev ts))
+let rec list ?padding = function
+  | [] -> make (0.0, 0.0) (fun _ -> [])
+  | [x] -> map (fun x -> x []) x
+  | xs ->
+      let xs = pairs ?padding [] xs in
+      list ?padding xs
+
+let list ?padding ts =
+  let ts = List.map (map (fun x rest ->  x::rest)) ts in
+  list ?padding ts
